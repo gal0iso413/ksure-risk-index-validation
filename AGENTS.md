@@ -1,9 +1,8 @@
 # ksure-risk-index-validation — agent context
 
-Korean trade-insurance **country Risk Index consistency validation** for KSURE (한국무역보험공사).
-Short PoC: check whether country RI (grades 1–5) aligns with observed risk indicators (loss ratio, real loss ratio, accident rate, country grade). Not ML, not a dashboard.
+2025 **country** Risk Index consistency review for KSURE. Not ML. Not country×industry direct validation.
 
-Governing plan: [`docs/plan.md`](docs/plan.md). Start each session at [`docs/next-actions.md`](docs/next-actions.md).
+Plan: [`docs/plan.md`](docs/plan.md). Session start: [`docs/next-actions.md`](docs/next-actions.md).
 
 ## Paths
 
@@ -11,29 +10,27 @@ Governing plan: [`docs/plan.md`](docs/plan.md). Start each session at [`docs/nex
 PROJECT=/home/tom/projects/ksure-risk-index-validation
 ```
 
-Real RI / target files live only on the **internal KSURE PC**. Never copy them into this workspace.
+Real monthly RI + target XLSX live only on the internal PC.
 
 ## Write boundary
-
-Agents may write only under:
 
 ```
 src/  tests/  docs/  config/  outputs/  wheelhouse/
 ```
 
-Never write real data under `input/` into git. Never paste real company names or raw row values into docs, commits, or chat.
+Never commit real `input/` files. Never paste real row values into docs/chat.
 
 ## Hard rules
 
-1. **Country-level only.** Even if RI has industry, aggregate to country before joining country-level targets. Do not claim country×industry consistency.
-2. **No pseudo-replication.** Do not fan country monthly stats onto every industry row and treat those as independent samples.
-3. **Lean internal transfer.** Prefer one `run_all` entrypoint + few modules over many CLI scripts.
-4. **Offline.** No internet, CDN, external APIs. HTML report must be self-contained.
-5. **Honest verdicts.** Supported / Partially supported / Not supported / Untestable per indicator — never force a single “accuracy” score.
-6. **Exposure (`국별총위험량`)** is reference-only, not a core target.
+1. Country-level only; aggregate industry×month before joining annual target.
+2. No pseudo-replication (final table = one row per country).
+3. No fuzzy country matching; optional explicit `country_name_map.json` only.
+4. Do not treat Excel `#N/A` / blanks as zero; keep true zeros.
+5. Do not rescale rates because header contains `%`.
+6. Read cached XLSX values only (`data_only`); no external link refresh.
+7. Report wording: consistency review of current RI vs 2025 indicators — not independent predictive power.
+8. Exposure = reference only. Lean transfer bundle.
 
 ## Working style
 
-- Lock column maps and grade order from user-provided meta before coding joins.
-- Implement against synthetic data first; internal PC run only after smoke passes.
-- Keep the transfer bundle small: code + example configs + requirements + wheels + `run_all.bat`.
+Implement/test on synthetic fixtures that mirror real layouts. Internal run only after smoke passes.

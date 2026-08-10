@@ -1,37 +1,20 @@
 # MEMORY — `ksure-risk-index-validation`
 
-Confirmed facts and locked decisions. Never paste real RI/target rows.
+## Locked (2026-08-10)
 
-## Project
+- Country-level 2025 RI consistency review only (not country×industry direct).
+- Wording: consistency vs 2025 indicators — not independent predictive power.
+- Client: RI feature / validation-variable overlap not in scope as a dispute.
+- RI files: 12 monthly XLSX; Sheet1; header Excel row 2; A:E; values `RI 1`–`RI 5`; RI5=high risk.
+- Target: one XLSX; sheet `단기수출보험`; header Excel row 3; **F:K only**; grades 1–7 higher=worse.
+- Join on normalized Korean country name; no fuzzy match; optional `country_name_map.json`.
+- Aggregate industry→month→year; primary RI = annual median of monthly RI; primary cohort ≥6 months; one row/country.
+- Zeros ≠ missing; no % rescale; cached values only.
+- Exposure reference-only.
+- Lean `src.run_all` / `run_all.bat`.
 
-- KSURE **국가 Risk Index 정합성 검증** PoC.
-- Repo: `ksure-risk-index-validation` · path `/home/tom/projects/ksure-risk-index-validation`
-- Sisters: `ksure-overseas-biz-analysis`, `ksure-similar-claim-search`
-- Governing docs: `docs/plan.md`, `docs/next-actions.md`, `docs/intake.md`
+## Open (internal confirm)
 
-## Locked decisions (2026-08-10)
-
-- Scope = **country RI** only — not country×industry consistency claims.
-- Lean internal transfer: one `run_all` + few `src` modules (not 6 separate CLIs as the delivery shape).
-- No real data in git; synthetic only on Home PC.
-- Core targets: 손해율, 실질손해율, 사고율, 국가등급. Exposure = reference only.
-- Verdicts per indicator: Supported / Partially supported / Not supported / Untestable.
-- Pseudo-replication forbidden when joining country targets to industry-level RI.
-- Offline HTML report (no CDN/JS libs).
-
-## Open (need user meta)
-
-- Input file names, sheets, extensions
-- Column map (Korean headers)
-- Exact RI grain and target grain
-- RI direction (higher = riskier?)
-- Official country-grade order JSON
-- Internal Python version / install policy
-
-## Repo pointers
-
-- `README.md` — name, Korean title, run commands
-- `AGENTS.md` — write boundary and hard rules
-- `docs/intake.md` — identity and security
-- `docs/plan.md` — method summary
-- `docs/next-actions.md` — session start
+- Exact Python version + win32/amd64 for wheelhouse
+- Final confirmation that report meta says RI5=high risk
+- Manual country_name_map entries after first unmatched list

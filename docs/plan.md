@@ -1,51 +1,29 @@
 # Plan — `ksure-risk-index-validation`
 
-국가 RI 정합성 검증 PoC. 상세 방법론은 초기 ChatGPT 계획을 참고하되, **국가 단위·lean 이관**으로 재구성한다.
+## 목적
 
-## 1. 과업 성격
+2025년 국가 RI(1–5, RI5=고위험)와 단기수출보험 국별 위험지표의 **정합성 검토**.
+독립 예측력 검증이 아니며, RI 유용성 결론을 강제하지 않는다.
 
-모델 개발이 아니다. RI(1~5)와 실제 위험지표의 관계가 기대 방향과 맞는지 검증한다.
+## 데이터
 
-핵심 타깃: 손해율, 실질손해율, 사고율, 국가등급.  
-참고만: 국별총위험량(규모·포트폴리오 효과 주의).
+- RI: 월별 XLSX 12개, `Sheet1`, 헤더 Excel 2행, A:E, `RI n` 문자열, 코드는 문자열
+- Target: 1파일, `단기수출보험`, 헤더 Excel 3행, F:K만 (A:D 미사용)
+- 조인: 국가한글명 + 선택적 수동 맵. 퍼지 금지
+- 집계: 국가×월(업종 RI 혼재 시 중앙값) → 연간 중앙값(주분석). 코호트 ≥6개월
 
-## 2. 분석 단위 (고정)
+## 통계
 
-| 데이터 | 기대 grain | 처리 |
-|--------|------------|------|
-| RI | 국가 (업종이 있어도 **국가 요약**) | 중앙값·평균·고위험 비율 등 |
-| Target | 국가×기간 (월/연) | 국가 요약 후 조인; 월행을 독립표본으로 쓰지 않음 |
+전체 Spearman+bootstrap CI, 0초과 발생여부, 양수 부분(n≥10), Kruskal-Wallis+ε²,
+국가등급 교차, exposure 참고, 민감도(12개월/전체/평균/고위험월비율).
 
-의사반복 금지. 국가×업종 직접 정합성을 검증했다고 쓰지 않는다.
+판정: Supported / Partially supported / Not supported / Untestable
 
-## 3. 파이프라인 (lean)
+## 품질 게이트
 
-단일 진입점 `python -m src.run_all` / `run_all.bat`가 아래를 순서 실행:
+12개월 파일·시트·헤더·RI범위·등급1–7·타깃 국가명 중복·cached value 실패 시 중단.
+월 일부 결측·업종 RI 혼재·미매칭·고비율 0은 경고+표.
 
-1. Inspect inputs (프로필)
-2. Validate schema / quality issues
-3. Join coverage
-4. Build analysis table (국가 grain)
-5. Statistical validation (Spearman + bootstrap CI, Kruskal–Wallis, 단조 여부)
-6. Figures (정적 PNG)
-7. Offline HTML report
+## 실행
 
-모듈은 `src/` 아래 소수 파일로 유지. 내부 PC에는 **디렉터리 통째 최소 세트**만 옮긴다.
-
-## 4. 판정
-
-지표별: Supported / Partially supported / Not supported / Untestable.  
-p-value만으로 결론 내지 않음. 방향·효과·CI·표본·민감도를 함께 보고.
-
-## 5. 환경
-
-- Home: 합성 데이터로 개발·테스트
-- Internal: 오프라인 pip + wheelhouse, 실데이터 `input/`
-- 원본 읽기 전용, 시드 고정, 민감 로그 금지
-
-## 6. 완료 기준
-
-- [ ] 합성 정합·무관·오류 시나리오 smoke 통과
-- [ ] 매칭률·분석 단위·한계가 보고서에 명시
-- [ ] 정합성 없음/검증 불가 결론도 정상 생성
-- [ ] 내부 이관 파일 수 최소화 문서화
+`python -m src.run_all --config config/analysis_config.json` 또는 `run_all.bat`

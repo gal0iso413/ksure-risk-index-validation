@@ -1,21 +1,52 @@
 {
   "project": "ksure-risk-index-validation",
+  "analysis_year": 2025,
   "seed": 42,
   "ri_higher_means_riskier": true,
   "paths": {
-    "ri_file": "input/ri.xlsx",
-    "ri_sheet": 0,
-    "target_file": "input/target.xlsx",
-    "target_sheet": 0,
-    "column_map": "config/column_map.json",
-    "country_grade_map": "config/country_grade_map.json",
+    "ri_glob": "input/risk_index/2025년*월*Risk*Index*보고서*.xlsx",
+    "target_file": "input/target/04.월별손해율총괄분석_국별 사고율, 손해율_단기수출보험만.xlsx",
+    "country_name_map": "config/country_name_map.json",
     "output_dir": "outputs"
+  },
+  "ri_excel": {
+    "sheet_name": "Sheet1",
+    "excel_header_row": 2,
+    "usecols": "A:E",
+    "expected_headers": [
+      "국가한글명",
+      "업종한글명",
+      "수입자국가코드",
+      "업종코드",
+      "Risk Index"
+    ]
+  },
+  "target_excel": {
+    "sheet_name": "단기수출보험",
+    "excel_header_row": 3,
+    "usecols": "F:K",
+    "expected_headers": [
+      "행 레이블",
+      "국가등급",
+      "평균 : 사고율(%)",
+      "평균 : 손해율(%)",
+      "평균 : 실질손해율",
+      "미화국별총위험량(단기)"
+    ],
+    "exclude_country_names": ["값 없음", "기타"]
   },
   "analysis": {
     "grain": "country",
-    "ri_country_agg": "median",
-    "target_period_mode": "latest_month",
+    "primary_ri_aggregation": "median",
+    "minimum_months_primary": 6,
+    "complete_year_months": 12,
     "bootstrap_n": 2000,
-    "bootstrap_unit": "country"
+    "bootstrap_unit": "country",
+    "positive_subset_min_n": 10,
+    "min_countries_testable": 10
+  },
+  "units": {
+    "rate_unit_label": "percentage points",
+    "rescale_rates": false
   }
 }
