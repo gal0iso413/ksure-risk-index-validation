@@ -65,5 +65,4 @@ Status: **active** — repo bootstrap; awaiting data meta from outside.
 
 ### 7. Backup / export
 
-- Git remote: **TBD** (local-only until user asks)
-- Suggested private remote name: `ksure-risk-index-validation`
+- Git remote: [gal0iso413/ksure-risk-index-validation](https://github.com/gal0iso413/ksure-risk-index-validation.git) (`origin` / `main`)
