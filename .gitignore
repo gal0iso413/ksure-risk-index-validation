@@ -1,0 +1,31 @@
+# --- Real KSURE data never enters git ---
+input/*
+!input/README.txt
+*.xlsx
+*.xls
+*.xlsb
+*.csv
+!tests/fixtures/**
+
+# Local config copies (filled on internal PC / local runs)
+config/analysis_config.json
+config/column_map.json
+config/country_grade_map.json
+
+# Outputs and offline wheels
+outputs/**/*
+!outputs/**/.gitkeep
+wheelhouse/*.whl
+!wheelhouse/.gitkeep
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Local env
+.env

@@ -1,0 +1,21 @@
+{
+  "project": "ksure-risk-index-validation",
+  "seed": 42,
+  "ri_higher_means_riskier": true,
+  "paths": {
+    "ri_file": "input/ri.xlsx",
+    "ri_sheet": 0,
+    "target_file": "input/target.xlsx",
+    "target_sheet": 0,
+    "column_map": "config/column_map.json",
+    "country_grade_map": "config/country_grade_map.json",
+    "output_dir": "outputs"
+  },
+  "analysis": {
+    "grain": "country",
+    "ri_country_agg": "median",
+    "target_period_mode": "latest_month",
+    "bootstrap_n": 2000,
+    "bootstrap_unit": "country"
+  }
+}
