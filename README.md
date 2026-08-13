@@ -4,7 +4,8 @@
 
 자매 프로젝트: `ksure-overseas-biz-analysis`, `ksure-similar-claim-search`
 
-**계획:** [`docs/plan.md`](docs/plan.md) · **세션 시작:** [`docs/next-actions.md`](docs/next-actions.md) · **Intake:** [`docs/intake.md`](docs/intake.md)
+**계획:** [`docs/plan.md`](docs/plan.md) · **세션 시작:** [`docs/next-actions.md`](docs/next-actions.md) · **Intake:** [`docs/intake.md`](docs/intake.md)  
+**결과 해석:** [`docs/results-guide.md`](docs/results-guide.md)
 
 실데이터는 내부 PC에만 둔다. 저장소에는 코드·example config·합성 fixture만 포함한다.
 

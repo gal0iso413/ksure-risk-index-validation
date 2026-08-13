@@ -13,8 +13,13 @@
 - Exposure reference-only.
 - Lean `src.run_all` / `run_all.bat`.
 
-## Open (internal confirm)
+## Internal run notes (2026-08-13)
 
-- Exact Python version + win32/amd64 for wheelhouse
-- Final confirmation that report meta says RI5=high risk
-- Manual country_name_map entries after first unmatched list
+- Real xlsx may be DRMONE-wrapped; Excel opens, openpyxl does not. Decrypt/export first.
+- Target loader can look hung: no log until sheet scan finishes; value-only small xlsx is faster.
+- Grade `0` fails the 1–7 gate (not a country_name_map issue). Exclude total/dummy rows in config.
+
+## Open
+
+- Manual `country_name_map.json` after `unmatched_countries.xlsx`
+- Interpretation guide: `docs/results-guide.md`
