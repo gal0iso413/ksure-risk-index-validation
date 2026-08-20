@@ -3,6 +3,8 @@
 이 문서는 내부 실행 후 생성된 HTML·엑셀·그림이 **어떤 절차로 나왔는지**, **어떻게 읽어야 하는지**를 설명한다.  
 실데이터 숫자는 넣지 않는다. 산출물 파일만 보면 된다.
 
+2025년 1차 실행의 실제 값·고객사 설명은 [`results-guide-first.md`](results-guide-first.md)를 본다.
+
 **읽을 순서:** HTML 보고서 → `verdicts.xlsx` → `join_coverage.xlsx` / `unmatched_countries.xlsx` → `statistical_results.xlsx` → 그림.
 
 ---
