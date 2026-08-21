@@ -6,12 +6,12 @@
 - Wording: consistency vs 2025 indicators — not independent predictive power.
 - Client: RI feature / validation-variable overlap not in scope as a dispute.
 - RI files: 12 monthly XLSX; Sheet1; header Excel row 2; A:E; values `RI 1`–`RI 5`; RI5=high risk.
-- Target: one XLSX; sheet `단기수출보험`; header Excel row 3; **F:K only**; grades 1–7 higher=worse.
+- Target: one XLSX; sheet `단기수출보험`; header Excel row 3; **F:K** (F=country name, G–K = grade, accident, loss, real loss, **미화국별총위험량(단기)**); grades 1–7 higher=worse.
 - Join on normalized Korean country name; no fuzzy match; optional `country_name_map.json`.
 - Aggregate industry→month→year; primary RI = annual median of monthly RI; primary cohort ≥6 months; one row/country.
 - Zeros ≠ missing; no % rescale; cached values only.
-- Exposure reference-only.
-- Lean `src.run_all` / `run_all.bat`.
+- Exposure is a **core** target (expected: higher RI → larger short-term exposure).
+- Lean `src.run_all` / `run_all.bat`. Client report = generated HTML + Markdown from `docs/report_template.md`.
 
 ## Internal run notes (2026-08-13)
 
@@ -22,4 +22,4 @@
 ## Open
 
 - Manual `country_name_map.json` after `unmatched_countries.xlsx`
-- Interpretation guide: `docs/results-guide.md`
+- Internal PC re-run after 5-target report (HTML+MD)

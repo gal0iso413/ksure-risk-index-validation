@@ -114,7 +114,8 @@ def run(config_path: str) -> int:
             results=results,
             figure_paths=figs,
             analysis=final,
-            out_path=paths["report"] / "risk_index_validation_report.html",
+            figure_dir=paths["figures"],
+            out_dir=paths["report"],
         )
         logger.info("Report written: %s", report_path)
         logger.info("Verdicts: %s", results.get("verdicts"))

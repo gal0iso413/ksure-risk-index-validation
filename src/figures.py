@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from .stats import RATE_METRICS
+from .stats import CORE_METRIC_KEYS, RATE_METRICS
 
 
 def _setup_font() -> None:
@@ -134,16 +134,16 @@ def make_figures(
     plt.close(fig)
     paths.append(p)
 
-    # 8 Spearman CI summary
-    fig, ax = plt.subplots(figsize=(8, 4))
+    # 8 Spearman CI summary (five core targets)
+    fig, ax = plt.subplots(figsize=(8, 4.5))
     primary_metrics = results.get("primary_ge_6m", {}).get("metrics", {})
     names, rhos, los, his = [], [], [], []
-    for key in ["accident_rate", "loss_ratio", "real_loss_ratio", "country_grade"]:
+    for key in CORE_METRIC_KEYS:
         m = primary_metrics.get(key, {})
         names.append(m.get("label", key))
         rhos.append(m.get("spearman_rho") if m.get("spearman_rho") is not None else 0)
-        los.append(m.get("ci95", {}).get("low") or 0)
-        his.append(m.get("ci95", {}).get("high") or 0)
+        los.append((m.get("ci95") or {}).get("low") or 0)
+        his.append((m.get("ci95") or {}).get("high") or 0)
     y = np.arange(len(names))
     ax.hlines(y, los, his, color="#333333")
     ax.plot(rhos, y, "o", color="#2F5D8A")
@@ -169,6 +169,28 @@ def make_figures(
     ax.set_title("국가 매칭·미매칭 수")
     ax.set_ylabel("국가 수")
     p = fig_dir / "09_matching.png"
+    fig.tight_layout()
+    fig.savefig(p, dpi=120)
+    plt.close(fig)
+    paths.append(p)
+
+    # 10 exposure by RI (size metric; log y when values are large)
+    fig, ax = plt.subplots(figsize=(7, 4.5))
+    exp = primary.dropna(subset=["exposure", "ri_level"])
+    if exp.empty:
+        ax.set_title("미화국별총위험량(단기) — 값 없음")
+    else:
+        levels = sorted(exp["ri_level"].dropna().unique())
+        data = [exp.loc[exp["ri_level"] == lvl, "exposure"].to_numpy(float) for lvl in levels]
+        labels = [str(int(lvl)) for lvl in levels]
+        ax.boxplot(data, tick_labels=labels, showfliers=True)
+        med = float(np.nanmedian(exp["exposure"].to_numpy(float)))
+        if med >= 10_000:
+            ax.set_yscale("log")
+        ax.set_xlabel("RI")
+        ax.set_ylabel("미화국별총위험량(단기)")
+        ax.set_title(f"RI별 미화국별총위험량(단기) (주분석 n={len(primary)})")
+    p = fig_dir / "10_exposure_by_ri.png"
     fig.tight_layout()
     fig.savefig(p, dpi=120)
     plt.close(fig)

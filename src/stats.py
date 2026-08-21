@@ -14,6 +14,23 @@ RATE_METRICS = [
     ("real_loss_ratio", "has_real_loss", "실질손해율"),
 ]
 
+# Core verdict targets. Size-like metrics skip incidence (value>0) in the verdict.
+CORE_METRIC_KEYS = [
+    "accident_rate",
+    "loss_ratio",
+    "real_loss_ratio",
+    "country_grade",
+    "exposure",
+]
+SIZE_METRIC_KEYS = frozenset({"country_grade", "exposure"})
+SENSITIVITY_COHORTS = [
+    "primary_ge_6m",
+    "complete_12m",
+    "all_matched",
+    "primary_mean_ri",
+    "primary_high_share",
+]
+
 
 def _spearman(x: pd.Series, y: pd.Series) -> tuple[float | None, float | None, int]:
     mask = x.notna() & y.notna()
@@ -295,15 +312,45 @@ def analyze_cohort(
         ),
     }
 
-    # exposure reference only
+    # exposure: core target (expected: higher RI → larger short-term exposure)
     e_rho, e_p, e_n = _spearman(work[ri_col], work["exposure"])
+    e_mask = work[ri_col].notna() & work["exposure"].notna()
+    e_ci = (None, None)
+    if e_mask.sum() >= 3:
+        e_ci = _bootstrap_spearman(
+            work.loc[e_mask, ri_col].to_numpy(float),
+            work.loc[e_mask, "exposure"].to_numpy(float),
+            rng,
+            n_boot,
+        )
+    exp_desc = []
+    exp_groups = []
+    for lvl in sorted([int(x) for x in work["ri_level"].dropna().unique()]):
+        sub = work[work["ri_level"] == lvl]["exposure"]
+        exp_groups.append(sub.to_numpy(float))
+        exp_desc.append(
+            {
+                "ri_level": lvl,
+                "n": int(sub.notna().sum()),
+                "median": float(sub.median()) if sub.notna().any() else None,
+                "mean": float(sub.mean()) if sub.notna().any() else None,
+            }
+        )
+    e_h, e_hp, e_eps2 = _kruskal_eps2(exp_groups)
     metric_results["exposure"] = {
-        "label": "미화국별총위험량(참고)",
+        "label": "미화국별총위험량(단기)",
         "spearman_rho": e_rho,
         "spearman_p": e_p,
         "n": e_n,
-        "reference_only": True,
-        "missing_share": float(work["exposure"].isna().mean()),
+        "ci95": {"low": e_ci[0], "high": e_ci[1]},
+        "kruskal_h": e_h,
+        "kruskal_p": e_hp,
+        "epsilon_squared": e_eps2,
+        "by_ri_level": exp_desc,
+        "median_monotonic": _is_mostly_monotonic(
+            [r["median"] for r in exp_desc], expected_positive
+        ),
+        "missing_share": float(work["exposure"].isna().mean()) if len(work) else None,
     }
 
     out["metrics"] = metric_results
@@ -340,15 +387,9 @@ def run_validation(analysis: pd.DataFrame, cfg: dict[str, Any], rng: np.random.G
     # Verdicts on primary cohort with sensitivity signs
     primary = results["primary_ge_6m"]
     verdicts = {}
-    for key in ["accident_rate", "loss_ratio", "real_loss_ratio", "country_grade"]:
+    for key in CORE_METRIC_KEYS:
         sens_signs = []
-        for sens_name in [
-            "primary_ge_6m",
-            "complete_12m",
-            "all_matched",
-            "primary_mean_ri",
-            "primary_high_share",
-        ]:
+        for sens_name in SENSITIVITY_COHORTS:
             m = results[sens_name]["metrics"].get(key, {})
             rho = m.get("spearman_rho")
             if rho is None:
@@ -363,17 +404,13 @@ def run_validation(analysis: pd.DataFrame, cfg: dict[str, Any], rng: np.random.G
         pm = primary["metrics"][key]
         n = int(pm.get("n") or 0)
         n_pos = int(pm.get("positive_subset", {}).get("n") or 0)
-        has_var = True
-        if key != "country_grade":
-            has_var = len(primary.get("ri_level_counts", {})) >= 2
-        else:
-            has_var = n >= 3 and len(primary.get("ri_level_counts", {})) >= 2
-
-        if key == "country_grade":
+        has_var = n >= 3 and len(primary.get("ri_level_counts", {})) >= 2
+        ci = pm.get("ci95") or {}
+        if key in SIZE_METRIC_KEYS:
             verdicts[key] = _verdict(
                 expected_positive=expected_positive,
                 rho=pm.get("spearman_rho"),
-                ci=(pm["ci95"]["low"], pm["ci95"]["high"]),
+                ci=(ci.get("low"), ci.get("high")),
                 mono_ok=bool(pm.get("median_monotonic")),
                 incidence_rho=None,
                 positive_rho=None,
@@ -388,7 +425,7 @@ def run_validation(analysis: pd.DataFrame, cfg: dict[str, Any], rng: np.random.G
             verdicts[key] = _verdict(
                 expected_positive=expected_positive,
                 rho=pm.get("spearman_rho"),
-                ci=(pm["ci95"]["low"], pm["ci95"]["high"]),
+                ci=(ci.get("low"), ci.get("high")),
                 mono_ok=bool(pm.get("median_monotonic")),
                 incidence_rho=pm.get("incidence", {}).get("spearman_rho"),
                 positive_rho=pm.get("positive_subset", {}).get("spearman_rho"),

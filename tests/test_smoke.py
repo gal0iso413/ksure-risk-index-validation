@@ -110,10 +110,15 @@ def test_aligned_verdict(tmp_path: Path):
     out = Path(json.loads(cfg_path.read_text())["paths"]["output_dir"])
     verdicts = pd.read_excel(out / "tables" / "verdicts.xlsx")
     vmap = dict(zip(verdicts["metric"], verdicts["verdict"]))
+    assert "exposure" in vmap
     # at least one risk metric should not be Not supported
     core = [vmap.get("accident_rate"), vmap.get("loss_ratio"), vmap.get("real_loss_ratio"), vmap.get("country_grade")]
     assert any(v in {"Supported", "Partially supported"} for v in core)
-    assert (out / "report" / "risk_index_validation_report.html").exists()
+    html = (out / "report" / "risk_index_validation_report.html").read_text(encoding="utf-8")
+    md = (out / "report" / "risk_index_validation_report.md").read_text(encoding="utf-8")
+    assert "미화국별총위험량" in html
+    assert "미화국별총위험량" in md
+    assert (out / "figures" / "10_exposure_by_ri.png").exists()
     table = pd.read_excel(out / "tables" / "country_analysis_table.xlsx")
     assert table["country_name"].is_unique
 
@@ -152,6 +157,8 @@ def test_full_smoke_aligned(tmp_path: Path):
         "figures/01_ri_distribution.png",
         "figures/08_spearman_ci.png",
         "report/risk_index_validation_report.html",
+        "report/risk_index_validation_report.md",
+        "figures/10_exposure_by_ri.png",
         "logs/run_summary.log",
     ]:
         assert (out / rel).exists(), rel

@@ -29,7 +29,7 @@ Never commit real `input/` files. Never paste real row values into docs/chat.
 5. Do not rescale rates because header contains `%`.
 6. Read cached XLSX values only (`data_only`); no external link refresh.
 7. Report wording: consistency review of current RI vs 2025 indicators — not independent predictive power.
-8. Exposure = reference only. Lean transfer bundle.
+8. Five core targets including short-term country exposure (미화국별총위험량). Expected: higher RI → larger exposure. Lean transfer bundle.
 
 ## Working style
 
