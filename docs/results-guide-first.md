@@ -1,7 +1,8 @@
 # 2025 국가 Risk Index 정합성 검토 — 1차 결과 설명 (고객사)
 
 > **기록용.** 4지표(사고율·손해율·실질손해율·국가등급) 1차 브리핑이다. 미화국별총위험량(단기)는 당시 핵심 판정에 넣지 않았다.  
-> 이후 고객 설명의 본문은 파이프라인이 만드는 `outputs/report/risk_index_validation_report.html` / `.md` 이다. 이 파일의 숫자는 1차 실행 그대로 둔다.
+> 이후 고객 설명의 본문은 파이프라인이 만드는 `outputs/report/risk_index_validation_report.html` / `.md` 이다. 이 파일의 숫자는 1차 실행 그대로 둔다.  
+> 5지표 재실행 집계는 [`results-guide-second.md`](results-guide-second.md).
 
 이 문서는 내부에서 생성한 `risk_index_validation_report.html` **1차 결과**를 기준으로,  
 산출이 어떻게 이뤄졌는지와 숫자가 무엇을 말하는지를 고객사 설명용으로 정리한 것이다.
