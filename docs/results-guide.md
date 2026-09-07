@@ -6,7 +6,8 @@
 고객 설명의 **본문**은 실행이 만든 `outputs/report/risk_index_validation_report.html`(같은 내용의 `.md`)이다. 문장 수정은 [`report_template.md`](report_template.md)에서 한다.
 
 2025년 **5지표 실행** 집계(내부 HTML 캡처에서 옮김)는 [`results-guide-second.md`](results-guide-second.md).  
-4지표 1차 브리핑 기록(총위험량은 당시 핵심 판정에 넣지 않음)은 [`results-guide-first.md`](results-guide-first.md)에 그대로 둔다.
+4지표 1차 브리핑 기록(총위험량은 당시 핵심 판정에 넣지 않음)은 [`results-guide-first.md`](results-guide-first.md)에 그대로 둔다.  
+2026-09-07 미팅(한도 용도·후속 범위): [`meeting-2026-09-07.md`](meeting-2026-09-07.md).
 
 **읽을 순서:** HTML(또는 MD) 보고서 → `verdicts.xlsx` → `join_coverage.xlsx` / `unmatched_countries.xlsx` → `statistical_results.xlsx` → 그림.
 

@@ -2,7 +2,8 @@
 
 2025 **country** Risk Index consistency review for KSURE. Not ML. Not country×industry direct validation.
 
-Plan: [`docs/plan.md`](docs/plan.md). Session start: [`docs/next-actions.md`](docs/next-actions.md).
+Plan: [`docs/plan.md`](docs/plan.md). Session start: [`docs/next-actions.md`](docs/next-actions.md).  
+2026-09-07 미팅: [`docs/meeting-2026-09-07.md`](docs/meeting-2026-09-07.md).
 
 ## Paths
 
@@ -29,7 +30,8 @@ Never commit real `input/` files. Never paste real row values into docs/chat.
 5. Do not rescale rates because header contains `%`.
 6. Read cached XLSX values only (`data_only`); no external link refresh.
 7. Report wording: consistency review of current RI vs 2025 indicators — not independent predictive power.
-8. Five core targets including short-term country exposure (미화국별총위험량). Expected: higher RI → larger exposure. Lean transfer bundle.
+8. Five core targets including short-term country exposure (미화국별총위험량). Expected: higher RI → larger exposure (size, not a danger score). Lean transfer bundle.
+9. After 2026-09-07 meeting: country-grade correlation is likely circular (grade is an RI input). Do not sell it as independent validation. Follow-up A = high-risk subset + lead-lag **cases** (needs history from the client). Follow-up B = industry roll-up weighted by KSURE underwriting — **construction, not validation**; do not join industry RI to country annual targets as if that tested industry risk. Macro/commodity correlations are out of this repo.
 
 ## Working style
 
